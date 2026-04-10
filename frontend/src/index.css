@@ -1,21 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 
-
-@theme {
+/* Your custom CSS (normal CSS only) */
+:root {
   --color-primary: #FF6B6B;
   --color-secondary: #1A2B48;
-  --color-accent: #FF6B6B;
-  --color-accent-bg: #fff5f5;
-  --color-accent-border: #ff8787;
-  --color-bg-base: #f5f7fb;
-  --color-bg-alt: #e2e8f0;
-  --color-glass: rgba(255, 255, 255, 0.85);
-  --color-border-glass: rgba(255, 255, 255, 0.3);
 }
 
-@layer base {
-  body {
-    @apply bg-bg-base text-secondary font-sans antialiased;
-  }
+body {
+  background-color: #f5f7fb;
+  color: #1A2B48;
+  font-family: 'Inter', sans-serif;
 }

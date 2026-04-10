@@ -1,27 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { BookingContext } from '../context/BookingContext';
+import { AuthContext } from '../context/AuthContext';
 
 const Checkout = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { addBooking } = useContext(BookingContext);
+    const { user } = useContext(AuthContext);
+
+    // Get trip data from navigation state
+    const tripData = location.state || {
+        seats: [],
+        totalFare: 0,
+        route: "Route Not Selected",
+        date: "N/A"
+    };
+
     const [paymentMethod, setPaymentMethod] = useState('');
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const [passengerDetails, setPassengerDetails] = useState({
+        name: user?.name || '',
+        age: '',
+        gender: '',
+        mobile: '',
+        email: user?.email || ''
+    });
+
+    const handleInputChange = (e) => {
+        setPassengerDetails({
+            ...passengerDetails,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const ServiceFee = 50;
+    const GST = Math.round(tripData.totalFare * 0.05);
+    const grandTotal = tripData.totalFare + ServiceFee + GST;
 
     const handleConfirm = (e) => {
         e.preventDefault();
+        
+        // Save booking to context
+        addBooking({
+            route: tripData.route,
+            date: tripData.date,
+            seats: tripData.seats,
+            total: grandTotal,
+            passenger: passengerDetails
+        });
+
         setIsConfirmed(true);
     };
 
     if (isConfirmed) {
         return (
-            <div className="py-16 px-8 min-h-screen bg-[#f4f7f6] font-sans">
-                <div className="max-w-[500px] mx-auto p-12 text-center bg-white/85 backdrop-blur-md border border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] rounded-2xl">
-                    <h2 className="text-[#FF6B6B] text-3xl mb-8 font-bold">✨ Booking Confirmed!</h2>
-                    <div className="text-left bg-slate-50 p-8 rounded-xl mb-8">
-                        <p className="text-[1.1rem] text-[#1A2B48] mb-3"><strong>PNR:</strong> HCL-BUS-8493</p>
-                        <p className="text-[1.1rem] text-[#1A2B48] mb-3"><strong>Route:</strong> Mumbai ➔ Goa</p>
-                        <p className="text-[1.1rem] text-[#1A2B48] mb-3"><strong>Date:</strong> 24 Oct 2026</p>
-                        <p className="text-[1.1rem] text-[#1A2B48] mb-3"><strong>Passenger:</strong> John Doe</p>
-                        <p className="text-[1.1rem] text-[#1A2B48] mb-3"><strong>Seat:</strong> 12A (Upper Sleeper)</p>
+            <div className="py-16 px-8 min-h-screen font-sans">
+                <div className="max-w-[500px] mx-auto p-12 text-center bg-white/85 backdrop-blur-md border border-white/30 shadow-lg rounded-2xl">
+                    <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✓</div>
+                    <h2 className="text-[#1A2B48] text-3xl mb-8 font-bold">Booking Confirmed!</h2>
+                    <div className="text-left bg-slate-50 p-8 rounded-xl mb-8 border border-slate-200">
+                        <p className="text-[#1A2B48] mb-3"><strong>Route:</strong> {tripData.route}</p>
+                        <p className="text-[#1A2B48] mb-3"><strong>Date:</strong> {tripData.date}</p>
+                        <p className="text-[#1A2B48] mb-3"><strong>Passenger:</strong> {passengerDetails.name}</p>
+                        <p className="text-[#1A2B48] mb-3"><strong>Seats:</strong> {tripData.seats.join(', ')}</p>
+                        <p className="text-[#1A2B48]"><strong>Amount Paid:</strong> ₹{grandTotal}</p>
                     </div>
-                    <button className="w-full bg-gradient-to-br from-[#FF6B6B] to-[#ff4757] text-white p-4 border-none rounded-xl text-lg font-semibold cursor-pointer transition-all duration-300 shadow-[0_4px_15px_rgba(255,107,107,0.4)] hover:-translate-y-[2px] hover:shadow-[0_6px_20px_rgba(255,107,107,0.6)]" onClick={() => window.print()}>Print E-Ticket</button>
+                    <div className="flex gap-4">
+                        <button 
+                            className="flex-1 bg-gradient-to-br from-[#FF6B6B] to-[#ff4757] text-white p-4 rounded-xl font-semibold shadow-md"
+                            onClick={() => window.print()}
+                        >
+                            Print Ticket
+                        </button>
+                        <button 
+                            className="flex-1 bg-white text-[#1A2B48] p-4 border border-slate-200 rounded-xl font-semibold"
+                            onClick={() => navigate('/dashboard')}
+                        >
+                            History
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -38,15 +96,37 @@ const Checkout = () => {
                         <div className="flex gap-4 flex-wrap text-left">
                             <div className="flex-1 min-w-[200px] flex flex-col">
                                 <label className="mb-2 text-slate-600 text-sm font-medium">Full Name</label>
-                                <input className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="text" placeholder="Passenger Name" required />
+                                <input 
+                                    className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                                    type="text" 
+                                    name="name"
+                                    value={passengerDetails.name}
+                                    onChange={handleInputChange}
+                                    placeholder="Passenger Name" 
+                                    required 
+                                />
                             </div>
                             <div className="flex-[0.5] min-w-[100px] flex flex-col">
                                 <label className="mb-2 text-slate-600 text-sm font-medium">Age</label>
-                                <input className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="number" placeholder="Years" required />
+                                <input 
+                                    className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                                    type="number" 
+                                    name="age"
+                                    value={passengerDetails.age}
+                                    onChange={handleInputChange}
+                                    placeholder="Years" 
+                                    required 
+                                />
                             </div>
                             <div className="flex-[0.5] min-w-[100px] flex flex-col">
                                 <label className="mb-2 text-slate-600 text-sm font-medium">Gender</label>
-                                <select className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" required>
+                                <select 
+                                    className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                                    name="gender"
+                                    value={passengerDetails.gender}
+                                    onChange={handleInputChange}
+                                    required
+                                >
                                     <option value="">Select</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
@@ -60,11 +140,27 @@ const Checkout = () => {
                         <div className="flex gap-4 flex-wrap text-left">
                             <div className="flex-1 min-w-[200px] flex flex-col">
                                 <label className="mb-2 text-slate-600 text-sm font-medium">Mobile Number</label>
-                                <input className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="tel" placeholder="+91 9876543210" required />
+                                <input 
+                                    className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                                    type="tel" 
+                                    name="mobile"
+                                    value={passengerDetails.mobile}
+                                    onChange={handleInputChange}
+                                    placeholder="+91 9876543210" 
+                                    required 
+                                />
                             </div>
                             <div className="flex-1 min-w-[200px] flex flex-col">
                                 <label className="mb-2 text-slate-600 text-sm font-medium">Email Address</label>
-                                <input className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="email" placeholder="email@example.com" required />
+                                <input 
+                                    className="px-4 py-3 border-2 border-slate-200 rounded-lg text-base transition-all duration-300 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                                    type="email" 
+                                    name="email"
+                                    value={passengerDetails.email}
+                                    onChange={handleInputChange}
+                                    placeholder="email@example.com" 
+                                    required 
+                                />
                             </div>
                         </div>
                     </section>

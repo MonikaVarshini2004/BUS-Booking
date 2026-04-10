@@ -1,15 +1,36 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Auth = () => {
     const [isLogin, setIsLogin] = useState(true);
+    const [formData, setFormData] = useState({ name: '', email: '', password: '' });
     const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Determine where to redirect after login (default to dashboard)
+    const from = location.state?.from?.pathname || '/dashboard';
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Mock Login functionality
-        login('mock-jwt-token', { name: 'John Doe', email: 'john@example.com' });
+        
+        // Mock token generation
+        const mockToken = 'jwt-' + Math.random().toString(36).substr(2);
+        const userData = {
+            name: isLogin ? (formData.name || 'John Doe') : formData.name,
+            email: formData.email
+        };
+
+        login(mockToken, userData);
         alert(isLogin ? "Logged in successfully!" : "Registered successfully!");
+        
+        // Redirect back to original destination or dashboard
+        navigate(from, { replace: true });
     };
 
     return (
@@ -20,16 +41,40 @@ const Auth = () => {
                     {!isLogin && (
                         <div className="flex flex-col items-start">
                             <label className="text-sm text-slate-600 mb-2 font-medium">Full Name</label>
-                            <input className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-300 bg-white/90 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="text" placeholder="John Doe" required />
+                            <input 
+                                className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-300 bg-white/90 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                                type="text" 
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="John Doe" 
+                                required 
+                            />
                         </div>
                     )}
                     <div className="flex flex-col items-start">
                         <label className="text-sm text-slate-600 mb-2 font-medium">Email Address</label>
-                        <input className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-300 bg-white/90 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="email" placeholder="john@example.com" required />
+                        <input 
+                            className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-300 bg-white/90 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                            type="email" 
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="john@example.com" 
+                            required 
+                        />
                     </div>
                     <div className="flex flex-col items-start">
                         <label className="text-sm text-slate-600 mb-2 font-medium">Password</label>
-                        <input className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-300 bg-white/90 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" type="password" placeholder="••••••••" required />
+                        <input 
+                            className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-300 bg-white/90 focus:outline-none focus:border-[#FF6B6B] focus:ring-[3px] focus:ring-[#FF6B6B]/20" 
+                            type="password" 
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="••••••••" 
+                            required 
+                        />
                     </div>
                     <button type="submit" className="bg-gradient-to-br from-[#FF6B6B] to-[#ff4757] text-white p-4 border-none rounded-xl text-lg font-semibold cursor-pointer transition-all duration-300 shadow-[0_4px_15px_rgba(255,107,107,0.4)] mt-4 hover:-translate-y-[2px] hover:shadow-[0_6px_20px_rgba(255,107,107,0.6)]">
                         {isLogin ? 'Login' : 'Sign Up'}

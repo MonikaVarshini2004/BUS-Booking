@@ -8,21 +8,24 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (token) {
-            // Mock validation
-            setUser({ name: 'Guest User', email: 'guest@example.com' });
-        } else {
-            setUser(null);
+            // Check for stored user data in localStorage to persist user info
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            }
         }
     }, [token]);
 
     const login = (jwt, userData) => {
         localStorage.setItem('token', jwt);
+        localStorage.setItem('user', JSON.stringify(userData));
         setToken(jwt);
         setUser(userData);
     };
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setToken(null);
         setUser(null);
     };

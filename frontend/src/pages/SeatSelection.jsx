@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SeatGrid from '../components/SeatGrid';
 import '../styles/BookingFlow.css';
 
 const SeatSelection = () => {
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const navigate = useNavigate();
     const seatPrice = 1200;
 
     const toggleSeat = (seatId) => {
@@ -12,6 +14,17 @@ const SeatSelection = () => {
         } else {
             setSelectedSeats([...selectedSeats, seatId]);
         }
+    };
+
+    const handleProceed = () => {
+        navigate('/checkout', { 
+            state: { 
+                seats: selectedSeats,
+                totalFare: selectedSeats.length * seatPrice,
+                route: "Mumbai ➔ Goa", // Mock route data
+                date: "24 Oct 2026"
+            } 
+        });
     };
 
     return (
