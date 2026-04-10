@@ -2,7 +2,9 @@ package com.bus.booking.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "buses")
 public class Bus {
