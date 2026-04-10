@@ -1,0 +1,14 @@
+/* Global CSS Design System */
+:root {
+  --primary-navy: #1A2B48;
+  --accent-coral: #FF6B6B;
+  --bg-light: #F8F9FA;
+  --text-dark: #333333;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
