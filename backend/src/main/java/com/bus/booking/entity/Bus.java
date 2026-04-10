@@ -5,9 +5,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "buses")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Bus {
 
     @Id
@@ -25,4 +22,10 @@ public class Bus {
 
     @Column(nullable = false)
     private String operator;
+
+    public Long getId() { return id; }
+    public String getBusNumber() { return busNumber; }
+    public String getBusType() { return busType; }
+    public Integer getTotalSeats() { return totalSeats; }
+    public String getOperator() { return operator; }
 }

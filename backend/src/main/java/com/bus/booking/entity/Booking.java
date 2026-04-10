@@ -6,17 +6,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId; // Placeholder for actual User entity
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
@@ -31,4 +29,10 @@ public class Booking {
 
     @Column(nullable = false)
     private Double totalPaid;
+
+    public void setUser(User user) { this.user = user; }
+    public void setSchedule(Schedule schedule) { this.schedule = schedule; }
+    public void setSeat(Seat seat) { this.seat = seat; }
+    public void setBookedAt(LocalDateTime bookedAt) { this.bookedAt = bookedAt; }
+    public void setTotalPaid(Double totalPaid) { this.totalPaid = totalPaid; }
 }

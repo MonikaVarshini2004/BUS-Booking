@@ -5,9 +5,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "seats")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Seat {
 
     @Id
@@ -23,4 +20,7 @@ public class Seat {
 
     @Column(nullable = false)
     private Boolean isBooked = false;
+
+    public Boolean getIsBooked() { return isBooked; }
+    public void setIsBooked(Boolean booked) { isBooked = booked; }
 }

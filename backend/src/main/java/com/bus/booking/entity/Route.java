@@ -5,9 +5,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "routes")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Route {
 
     @Id
@@ -22,4 +19,9 @@ public class Route {
 
     @Column(nullable = false)
     private Double distance;
+
+    public Long getId() { return id; }
+    public String getSource() { return source; }
+    public String getDestination() { return destination; }
+    public Double getDistance() { return distance; }
 }
