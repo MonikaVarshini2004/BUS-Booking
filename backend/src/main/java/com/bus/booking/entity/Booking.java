@@ -3,7 +3,9 @@ package com.bus.booking.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "bookings")
 public class Booking {
