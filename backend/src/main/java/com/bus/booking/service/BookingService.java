@@ -17,6 +17,9 @@ public class BookingService {
     private BookingRepository bookingRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ScheduleRepository scheduleRepository;
 
     @Autowired
@@ -38,7 +41,8 @@ public class BookingService {
 
         // 3. Create Booking Record
         Booking booking = new Booking();
-        booking.setUserId(request.getUserId());
+        booking.setUser(userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found")));
         booking.setSchedule(schedule);
         booking.setSeat(seat);
         booking.setBookedAt(LocalDateTime.now());

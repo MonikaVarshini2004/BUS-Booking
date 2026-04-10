@@ -19,9 +19,3 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Param("endOfDay") LocalDateTime endOfDay
     );
 }
-
-// Other Repositories (Placeholders for now)
-interface BusRepository extends JpaRepository<com.bus.booking.entity.Bus, Long> {}
-interface RouteRepository extends JpaRepository<com.bus.booking.entity.Route, Long> {}
-interface SeatRepository extends JpaRepository<com.bus.booking.entity.Seat, Long> {}
-interface BookingRepository extends JpaRepository<com.bus.booking.entity.Booking, Long> {}

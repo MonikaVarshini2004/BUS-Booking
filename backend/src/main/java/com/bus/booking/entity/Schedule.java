@@ -6,9 +6,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "schedules")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Schedule {
 
     @Id
@@ -31,4 +28,7 @@ public class Schedule {
 
     @Column(nullable = false)
     private Double basePrice;
+
+    public Double getBasePrice() { return basePrice; }
+    public void setBasePrice(Double basePrice) { this.basePrice = basePrice; }
 }
